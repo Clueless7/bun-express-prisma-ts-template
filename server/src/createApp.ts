@@ -1,18 +1,14 @@
+import cors from 'cors'
 import express from 'express'
 import { handle404 } from './middlewares/handle404'
 import { handleError } from './middlewares/handleError'
+import { morganRotatingLog } from './middlewares/morganRotatingLog'
 import userRoutes from './routes/users.route'
-import morgan from 'morgan'
-import cors from 'cors'
-import rfs from 'rotating-file-stream'
-
-const accessLogStream = rfs.createStream('access.log', {
-  interval: '1d', // rotate daily
-  path: 'logs',
-})
 
 export const createApp = () => {
   const app = express()
+
+  app.use(morganRotatingLog)
 
   app.use(
     cors({
@@ -21,8 +17,6 @@ export const createApp = () => {
   )
 
   app.use(express.json())
-
-  app.use(morgan('common', { stream: accessLogStream }))
 
   app.use('/api/users', userRoutes)
 
