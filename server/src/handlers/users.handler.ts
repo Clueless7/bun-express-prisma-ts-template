@@ -4,6 +4,7 @@ import type { Request, Response } from 'express-serve-static-core'
 import { prisma } from '../db'
 import { CreateUserSchema } from '../dtos/CreateUser.dto'
 import type { ErrorMessage } from '../types/ErrorMessageType'
+import bcrypt from 'bcrypt'
 
 export const getUsers = async (
   req: Request,
@@ -27,7 +28,11 @@ export const createUser = async (
 
   const user = await prisma.user
     .create({
-      data: req.body,
+      data: {
+        username: input.data.username,
+        email: input.data.email,
+        password: await bcrypt.hash(input.data.password, 10),
+      },
     })
     .catch(next)
 
