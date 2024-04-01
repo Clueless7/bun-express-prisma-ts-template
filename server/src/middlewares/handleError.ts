@@ -6,7 +6,7 @@ import type { ErrorRequestHandler } from 'express-serve-static-core'
 
 export const handleError: ErrorRequestHandler = (err, req, res, next) => {
   if (err instanceof SyntaxError) {
-    res.status(422).json({ message: 'Invalid JSON' })
+    return res.status(422).json({ message: 'Invalid JSON' })
   }
 
   if (err instanceof PrismaClientKnownRequestError) {
